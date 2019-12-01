@@ -16,6 +16,7 @@ class CreateVideoTable extends Migration
         Schema::create('video', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('url', 250);
+            $table->string('name', 250);
             $table->timestamps();
         });
     }

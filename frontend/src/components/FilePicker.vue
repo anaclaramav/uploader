@@ -9,7 +9,7 @@
       @change="onChange"
     />
     <div class="upload-bar">
-      <img @click="pickFile()" class="upload-icon" src="../assets/upload.svg">
+      <img @click="pickFile" class="upload-icon" src="../assets/upload.svg">
     </div>
   </div>
 </template>
@@ -101,7 +101,7 @@ export default {
 
 <style>
 .picker {
-  width: 100%;
+  width: 50%;
   height: auto;
   min-height: 63px;
   display: flex;
@@ -109,7 +109,6 @@ export default {
   flex-direction: column;
   border-radius: 3px;
   font-size: 14px;
-  color: $default-text-color;
 }
 .fileItem {
   background-color: rgb(153, 194, 255);

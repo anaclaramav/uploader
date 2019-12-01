@@ -7,69 +7,71 @@ $router->get('/', function () use ($router) {
 });
 
 $router->delete('/images', function (Request $request) use ($router) {
-    $id = $request->input('id');
-    if (empty($id)) {
-        return response()->json("must send a image id");
+    $url = $request->input('url');
+    if (empty($url)) {
+        return response()->json("must send a image url");
     }
     Db::table('image')
-        ->where('id', $id)
+        ->where('url', $url)
         ->delete();
     return response()->json("image url removed");
 });
 
 $router->delete('/videos', function (Request $request) use ($router) {
-    $id = $request->input('id');
-    if (empty($id)) {
-        return response()->json("must send a video id");
+    $url = $request->input('url');
+    if (empty($url)) {
+        return response()->json("must send a video url");
     }
     Db::table('video')
-        ->where('id', $id)
+        ->where('url', $url)
         ->delete();
     return response()->json("video url removed");
 });
 
 $router->put('/images', function (Request $request) use ($router) {
-    $id = $request->input('id');
+    $old = $request->input('old');
     $url = $request->input('url');
-    if (empty($id) && empty($url)) {
-        return response()->json("must send a image id and a url");
+    if (empty($url) || empty($old)) {
+        return response()->json("must send the images' urls");
     }
     Db::table('image')
-        ->where('id', $id)
+        ->where('url', $old)
         ->update(['url' => $url]);
     return response()->json("image url updated");
 });
 
 $router->put('/videos', function (Request $request) use ($router) {
-    $id = $request->input('id');
+    $old = $request->input('old');
     $url = $request->input('url');
-    if (empty($id) && empty($url)) {
-        return response()->json("must send a video id and a url");
+    if (empty($url) || empty($old)) {
+        return response()->json("must send the videos' urls");
     }
     Db::table('video')
-        ->where('id', $id)
+        ->where('url', $old)
         ->update(['url' => $url]);
     return response()->json("video url updated");
 });
 
 $router->post('/images', function (Request $request) use ($router) {
     $data = $request->input('url');
+    $name = $request->input('name');
     if (empty($data)) {
-        return response()->json("must send a video url");
+        return response()->json("must send a image url");
     }
     Db::table('image')->insert(
-        ['url' => $data ]
+        ['url' => $data, 'name' => $name]
     );
     return response()->json("image url saved");
 });
 
 $router->post('/videos', function (Request $request) use ($router) {
     $data = $request->input('url');
+    $name = $request->input('name');
     if (empty($data)) {
         return response()->json("must send a video url");
     }
     Db::table('video')->insert(
-        ['url' => $data ]
+        ['url' => $data, 'name' => $name]
     );
     return response()->json("video url saved");
 });
