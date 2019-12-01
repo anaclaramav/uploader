@@ -74,7 +74,8 @@ $router->post('/videos', function (Request $request) use ($router) {
     return response()->json("video url saved");
 });
 
-$router->get('/media', function () use ($router) {
-    $results = app('db')->select("SELECT * FROM video UNION SELECT * FROM image");
-    return response()->json($results);
+$router->get('/medias', function () use ($router) {
+    $images = Db::table('image');
+    $videosAndImages = Db::table('video')->union($images)->get();
+    return response()->json($videosAndImages);
 });
