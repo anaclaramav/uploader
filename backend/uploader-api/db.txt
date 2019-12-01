@@ -1,0 +1,9 @@
+CREATE DATABASE ana_clara;
+
+use ana_clara;
+
+CREATE USER 'anaclara'@'localhost' IDENTIFIED BY 'anaclara';
+
+GRANT ALL PRIVILEGES ON ana_clara.* TO 'anaclara'@'localhost';
+
+FLUSH PRIVILEGES;
