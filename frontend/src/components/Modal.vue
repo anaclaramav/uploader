@@ -30,7 +30,7 @@ export default {
   border: 1px solid #353535;
   width: 80%;
   right: 10%;
-  height: 200px;
+  min-height: 200px;
   background-color: white;
   border-radius: 4px;
   z-index: 999;

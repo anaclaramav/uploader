@@ -3,8 +3,19 @@
     <Modal class="uploader-modal" v-if="showModal" @input="value => editable ? updateVideo(editable, value) : saveVideo(value)"/>
     <div class="uploader-header">
       uploader
+
+      <div class="show-info" @click="showInfo = !showInfo">
+        ?
+      </div>
     </div>
     <div class="container mediaContainer">
+      <Info v-if="showInfo">
+        Olá, me chamo Ana Clara Rocha Moreira, tenho 16 anos, sou natural de Mato Verde mas atualmente moro em Janaúba, estudo no IFNMG campus avançado Janaúba, e curso o 2° ano do ensino médio integrado, sou apaixonada por séries e nos momentos livres gosto de estar em contato com a natureza, como roças e cachoeiras. Isso é uma breve apresentação, só pra conhecimento básico mesmo!
+
+        Essa aplicação é uma simples ferramenta para fazer upload de images e vídeos:
+
+        Você pode salvar imagens do seu computador ou salvar links de vídeos do youtube
+      </Info>
       <div class="row center">
         <div class="col-sm-6 image-wrapper" v-for="(item, i) in medias" :key="i">
           <MediaCard 
@@ -27,6 +38,7 @@
 import FilePicker from './components/FilePicker'
 import MediaCard from './components/MediaCard'
 import Modal from './components/Modal'
+import Info from './components/Info'
 import firebase from 'firebase'
 
 export default {
@@ -36,7 +48,8 @@ export default {
       medias: null,
       editMedia: null,
       showModal: false,
-      editable: false
+      editable: false,
+      showInfo: false
     }
   },
   methods: {
@@ -48,7 +61,7 @@ export default {
       return !!(url.indexOf('youtube') > 0)
     },
     async saveVideo (options) {
-      await fetch('http://localhost:3006/videos', {
+      await fetch('/videos', {
         method: 'POST', 
         mode: 'cors', 
         headers: {
@@ -62,7 +75,7 @@ export default {
       this.showModal = false
     },
     async saveImage (url, name) {
-      await fetch('http://localhost:3006/images', {
+      await fetch('/images', {
         method: 'POST', 
         mode: 'cors', 
         headers: new Headers({
@@ -82,7 +95,7 @@ export default {
       });
     },
     async updateVideo (media, newItem) {
-      await fetch('http://localhost:3006/videos', {
+      await fetch('/videos', {
         method: 'PUT', 
         mode: 'cors', 
         headers: {
@@ -105,7 +118,7 @@ export default {
       this.showModal = false
     },
     async deleteImage (media) {
-      await fetch('http://localhost:3006/images', {
+      await fetch('/images', {
         method: 'DELETE', 
         mode: 'cors', 
         headers: {
@@ -116,7 +129,7 @@ export default {
       await this.remove(media)      
     },
     async deleteVideo (media) {
-      await fetch('http://localhost:3006/videos', {
+      await fetch('/videos', {
         method: 'DELETE', 
         mode: 'cors', 
         headers: {
@@ -133,7 +146,7 @@ export default {
     },
     async fetchMedia () {
       try {
-        const response = await fetch('http://localhost:3006/medias', {
+        const response = await fetch('/medias', {
           method: 'GET', 
           mode: 'cors', 
           headers: {
@@ -166,6 +179,15 @@ export default {
 
     },
     async completeUpdate (e) {
+
+      let name = this.editMedia.name
+
+      let storageRef = firebase.storage().ref()
+
+      let imageRef = storageRef.child(name);
+
+      await imageRef.delete()
+
       e.value = null
       let files = e.target.files
       let reader = new FileReader()
@@ -176,13 +198,7 @@ export default {
           resolve(e.target.result);
         }
       })
-
-      let storageRef = firebase.storage().ref()
-
-      let name = this.editMedia.name
       
-      let imageRef = storageRef.child(name)
-
       await imageRef.putString(result, 'data_url')
 
       const url = await imageRef.getDownloadURL()
@@ -211,10 +227,6 @@ export default {
 
       this.editMedia = media
 
-      let storageRef = firebase.storage().ref()
-      let imageRef = storageRef.child(media.name);
-      await imageRef.delete()
-
       this.$refs['editInput'].click()
 
     },
@@ -238,7 +250,8 @@ export default {
   components: {
     FilePicker,
     MediaCard,
-    Modal
+    Modal,
+    Info
   },
   async created () {
     this.fetchMedia()
@@ -253,6 +266,20 @@ export default {
   flex-flow: row wrap;
   width: 100%;
   height: 100vh;
+}
+
+.show-info {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-center: center;
+  min-width: 75px;
+  min-height: 50px;
+  font-size: 50px;
+  border-radius: 50%;
+  border: 2px solid #353535;
+  position: absolute;
+  right: 5%;
 }
 
 .uploader-modal { 
@@ -287,6 +314,7 @@ export default {
   position: fixed;
   z-index: 999;
   background-color: white;
+  position: relative;
 }
 
 .video {
@@ -307,7 +335,6 @@ export default {
 
 .mediaContainer {
   width: 100%;
-  margin-top: 15vh;
   height: 70vh;
   overflow-y: auto;
   margin-bottom: 100px;
@@ -334,7 +361,6 @@ export default {
     border-bottom: 1px solid #353535;
   } 
   .mediaContainer {
-    margin-top: 10vh;
     height: 80vh;
   }
   .filePicker, .video {
@@ -344,6 +370,12 @@ export default {
     bottom: 0vh;
     z-index: 999;
     background: white;
+  }
+
+  .show-info {
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 30px;
   }
   
 }

@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return response()->file(__DIR__ . '/../public/index.html',['Content-Type: text/html;']);
 });
 
 $router->delete('/images', function (Request $request) use ($router) {
